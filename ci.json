@@ -1,0 +1,6 @@
+[
+    {
+      "image" : "fugue-state-api",
+      "dockerfile" : "Dockerfile"
+    }
+  ]
