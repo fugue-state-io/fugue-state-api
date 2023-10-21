@@ -2,6 +2,7 @@ import subprocess
 import tempfile
 import os
 import wave
+import pydub
 import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -27,19 +28,31 @@ def process_audio():
             if filename.split('.')[1] != 'wav':
                 temp = tempfile.NamedTemporaryFile()
                 temp.write(file.read())
-                process = subprocess.Popen(['ffmpeg', '-i', temp.name, temp.name + '.wav'])
-                process.wait()
+                sound = pydub.AudioSegment.from_mp3(temp.name)
+                sound.export(temp.name + '.wav', format='wav')
+                # process = subprocess.Popen(['ffmpeg', '-i', temp.name, temp.name + '.wav'])
+                # process.wait()
                 signal_wave = wave.open(temp.name + '.wav', 'r')
-                if os.path.isfile(temp.name):
-                    os.remove(temp.name + '.wav')
+                    #Extract Raw Audio from Wav File
                 sample_rate = 16000
                 sig = np.frombuffer(signal_wave.readframes(sample_rate), dtype=np.int16)
                 plt.figure(1)
 
                 plot_a = plt.subplot(211)
                 plot_a.plot(sig)
+                plot_a.set_xlabel('sample rate * time')
+                plot_a.set_ylabel('energy')
+
+                plot_b = plt.subplot(212)
+                plot_b.specgram(sig, NFFT=1024, Fs=sample_rate, noverlap=900)
+                plot_b.set_xlabel('Time')
+                plot_b.set_ylabel('Frequency')
                 tmpfile = BytesIO()
-                plt.savefig(tmpfile, format="png")
+                
+                plt.savefig(tmpfile)
+                tmpfile.seek(0)
+                if os.path.isfile(temp.name):
+                    os.remove(temp.name + '.wav')
                 return send_file(
                     tmpfile,
                     as_attachment=True,
