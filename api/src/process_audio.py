@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
 from werkzeug.utils import secure_filename
-from flask import Flask, send_file, request, abort, Blueprint
+from flask import Flask, send_file, request, abort, Blueprint, make_response, jsonify
 bp = Blueprint("process_audio", __name__)
 ALLOWED_EXTENSIONS = {'mp3', 'wav', 'flac'}
 
@@ -26,32 +26,29 @@ def process_audio():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             if filename.split('.')[1] != 'wav':
+                plt.clf()
                 temp = tempfile.NamedTemporaryFile()
                 temp.write(file.read())
-                sound = pydub.AudioSegment.from_mp3(temp.name)
-                sound.export(temp.name + '.wav', format='wav')
                 # process = subprocess.Popen(['ffmpeg', '-i', temp.name, temp.name + '.wav'])
                 # process.wait()
+                sound = pydub.AudioSegment.from_mp3(temp.name)
+                sound.export(temp.name + '.wav', format='wav')
                 signal_wave = wave.open(temp.name + '.wav', 'r')
-                    #Extract Raw Audio from Wav File
-                sample_rate = 16000
+                sample_rate = -1
                 sig = np.frombuffer(signal_wave.readframes(sample_rate), dtype=np.int16)
                 plt.figure(1)
 
                 plot_a = plt.subplot(211)
-                plot_a.plot(sig)
-                plot_a.set_xlabel('sample rate * time')
-                plot_a.set_ylabel('energy')
-
-                plot_b = plt.subplot(212)
-                plot_b.specgram(sig, NFFT=1024, Fs=sample_rate, noverlap=900)
-                plot_b.set_xlabel('Time')
-                plot_b.set_ylabel('Frequency')
+                plot_a.plot(sig, color="g")
+                plot_a.axis('off')
+                
                 tmpfile = BytesIO()
                 
-                plt.savefig(tmpfile)
+                plt.savefig(tmpfile, bbox_inches='tight', pad_inches = 0, transparent=True )
+                plt.figure(1).clear()
+
                 tmpfile.seek(0)
-                if os.path.isfile(temp.name):
+                if os.path.isfile(temp.name + '.wav'):
                     os.remove(temp.name + '.wav')
                 return send_file(
                     tmpfile,
