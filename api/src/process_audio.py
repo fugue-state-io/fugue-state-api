@@ -37,12 +37,12 @@ def process_audio():
                 plt.figure(1)
 
                 plot_a = plt.subplot(211)
-                plot_a.plot(sig, color="g")
+                plot_a.plot(sig, color="g", linewidth=0.25)
                 plot_a.axis('off')
                 
                 tmpfile = BytesIO()
                 
-                plt.savefig(tmpfile, bbox_inches='tight', pad_inches = 0, transparent=True )
+                plt.savefig(tmpfile, bbox_inches='tight', pad_inches = 0, transparent=True, dpi=256)
                 plt.figure(1).clear()
 
                 tmpfile.seek(0)
