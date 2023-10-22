@@ -29,8 +29,6 @@ def process_audio():
                 plt.clf()
                 temp = tempfile.NamedTemporaryFile()
                 temp.write(file.read())
-                # process = subprocess.Popen(['ffmpeg', '-i', temp.name, temp.name + '.wav'])
-                # process.wait()
                 sound = pydub.AudioSegment.from_mp3(temp.name)
                 sound.export(temp.name + '.wav', format='wav')
                 signal_wave = wave.open(temp.name + '.wav', 'r')

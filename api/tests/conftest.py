@@ -1,10 +1,8 @@
 import pytest
-from ..src import create_app
+from .. import src
 @pytest.fixture
 def app():
-    app = create_app({
-        'TESTING': True
-    })
+    app = src.app
 
     yield app
 
