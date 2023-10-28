@@ -23,4 +23,4 @@ run
 The api serves the following endpoints
 
 ### `/api/process_audo`
-Takes an `.mp3` file and returns the waveform as a `.png`
+Takes an `.mp3` file and returns the waveform as a `.png`   

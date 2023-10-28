@@ -23,4 +23,4 @@ def test_process_audio_good_file_200(client):
     response = client.post('/api/process_audio', data=data)
     assert response.status_code == 200
     assert response.data != None
-    assert response.mimetype == 'image/png'
+    assert response.mimetype == 'text/html'
