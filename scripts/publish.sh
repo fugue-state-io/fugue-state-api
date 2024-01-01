@@ -1,8 +1,5 @@
 #!/bin/bash
 set -e
-export BOOTSTRAP_PATH=$(realpath "$0")
-export WORKING_DIRECTORY=$(dirname $BOOTSTRAP_PATH)
-
 export REF=$(git rev-parse HEAD)
 echo ${REF:0:8}
 if [[ `git status --porcelain` ]]; then
